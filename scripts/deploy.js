@@ -25,11 +25,35 @@ async function main() {
 
   console.log("Token address:", token.address);
 
+  const DaiToken = await ethers.getContractFactory("DaiToken");
+  const daiToken = await DaiToken.deploy();
+  await daiToken.deployed();
+
+  console.log("DaiToken address:", daiToken.address);
+
+  const DappToken = await ethers.getContractFactory("DappToken");
+  const dappToken = await DappToken.deploy();
+  await dappToken.deployed();
+
+  console.log("DappToken address:", dappToken.address);
+
+  const TokenFarm = await ethers.getContractFactory("TokenFarm");
+  const tokenFarm = await TokenFarm.deploy(dappToken.address, daiToken.address);
+  await tokenFarm.deployed();
+
+  console.log("TokenFarm address:", tokenFarm.address);
+
+  // Transfer all tokens to TokenFarm (1 million)
+  await dappToken.transfer(tokenFarm.address, '1000000000000000000000000')
+
+  // Transfer 100 Mock DAI tokens to investor
+  await daiToken.transfer(await deployer.getAddress(), '100000000000000000000')
+
   // We also save the contract's artifacts and address in the frontend directory
-  saveFrontendFiles(token);
+  saveFrontendFiles(token, daiToken, dappToken, tokenFarm);
 }
 
-function saveFrontendFiles(token) {
+function saveFrontendFiles(token, daiToken, dappToken, tokenFarm) {
   const fs = require("fs");
   const contractsDir = __dirname + "/../frontend/src/contracts";
 
@@ -39,14 +63,34 @@ function saveFrontendFiles(token) {
 
   fs.writeFileSync(
     contractsDir + "/contract-address.json",
-    JSON.stringify({ Token: token.address }, undefined, 2)
+    JSON.stringify({ 
+      Token: token.address, 
+      DaiToken: daiToken.address, 
+      DappToken: dappToken.address, 
+      TokenFarm: tokenFarm.address 
+    }, undefined, 2)
   );
 
   const TokenArtifact = artifacts.readArtifactSync("Token");
+  const DaiTokenArtifact = artifacts.readArtifactSync("DaiToken");
+  const DappTokenArtifact = artifacts.readArtifactSync("DappToken");
+  const TokenFarmArtifact = artifacts.readArtifactSync("TokenFarm");
 
   fs.writeFileSync(
     contractsDir + "/Token.json",
     JSON.stringify(TokenArtifact, null, 2)
+  );
+  fs.writeFileSync(
+    contractsDir + "/DaiToken.json",
+    JSON.stringify(DaiTokenArtifact, null, 2)
+  );
+  fs.writeFileSync(
+    contractsDir + "/DappToken.json",
+    JSON.stringify(DappTokenArtifact, null, 2)
+  );
+  fs.writeFileSync(
+    contractsDir + "/TokenFarm.json",
+    JSON.stringify(TokenFarmArtifact, null, 2)
   );
 }
 
