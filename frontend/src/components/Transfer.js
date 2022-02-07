@@ -5,7 +5,7 @@ import dai from '../dai.png';
 export function Transfer({
   stakeTokens,
   stakingBalance = '0',
-  dappTokenBalance = '0',
+  amsTokenBalance = '0',
   daiTokenBalance = '0',
   unstakeTokens
 }) {
@@ -23,7 +23,7 @@ export function Transfer({
         <tbody>
           <tr>
             <td>{web3.utils.fromWei(stakingBalance, 'ether')} mDAI</td>
-            <td>{web3.utils.fromWei(dappTokenBalance, 'ether')} DAPP</td>
+            <td>{web3.utils.fromWei(amsTokenBalance, 'ether')} AMS</td>
           </tr>
         </tbody>
       </table>

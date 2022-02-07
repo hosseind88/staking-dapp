@@ -1,8 +1,8 @@
 pragma solidity ^0.7.0;
 
-contract DappToken {
-    string  public name = "DApp Token";
-    string  public symbol = "DAPP";
+contract AMSToken {
+    string  public name = "AMS Token";
+    string  public symbol = "AMS";
     uint256 public totalSupply = 1000000000000000000000000; // 1 million tokens
     uint8   public decimals = 18;
 

@@ -1,8 +1,8 @@
+const addresses = require('../frontend/src/contracts/contract-address.json');
+
 async function main() {
   const TokenFarm = await ethers.getContractFactory("TokenFarm");
-  const tokenFarm = await TokenFarm.attach(
-    "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"
-  );
+  const tokenFarm = await TokenFarm.attach(addresses.TokenFarm);
   await tokenFarm.issueTokens()
   console.log("Tokens issued!")
 }

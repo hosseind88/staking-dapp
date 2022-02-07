@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 
 import TokenArtifact from '../contracts/Token.json';
 import DaiTokenArtifact from '../contracts/DaiToken.json';
-import DappTokenArtifact from '../contracts/DappToken.json';
+import AMSTokenArtifact from '../contracts/AMSToken.json';
 import TokenFarmArtifact from '../contracts/TokenFarm.json';
 import contractAddress from '../contracts/contract-address.json';
 
@@ -27,7 +27,7 @@ export class Dapp extends React.Component {
       networkError: undefined,
       // balances
       daiTokenBalance: '0',
-      dappTokenBalance: '0',
+      amsTokenBalance: '0',
       stakingBalance: '0',
       // loading
       loading: false,
@@ -82,7 +82,7 @@ export class Dapp extends React.Component {
             <Transfer
               transferTokens={(to, amount) => this._transferTokens(to, amount)}
               daiTokenBalance={this.state.daiTokenBalance}
-              dappTokenBalance={this.state.dappTokenBalance}
+              amsTokenBalance={this.state.amsTokenBalance}
               stakingBalance={this.state.stakingBalance}
               stakeTokens={this._stakeTokens}
               unstakeTokens={this._unstakeTokens}
@@ -137,9 +137,9 @@ export class Dapp extends React.Component {
       DaiTokenArtifact.abi,
       this._provider.getSigner(0)
     );
-    this._dappToken = new ethers.Contract(
-      contractAddress.DappToken,
-      DappTokenArtifact.abi,
+    this._amsToken = new ethers.Contract(
+      contractAddress.AMSToken,
+      AMSTokenArtifact.abi,
       this._provider.getSigner(0)
     );
     this._tokenFarm = new ethers.Contract(
@@ -156,18 +156,17 @@ export class Dapp extends React.Component {
 
   async _initializeBalances() {
     const daiTokenBalance = await this._daiToken.balanceOf(this.state.selectedAddress);
-    const dappTokenBalance = await this._dappToken.balanceOf(this.state.selectedAddress);
+    const amsTokenBalance = await this._amsToken.balanceOf(this.state.selectedAddress);
     const stakingBalance = await this._tokenFarm.stakingBalance(this.state.selectedAddress);
     this.setState({
       daiTokenBalance: daiTokenBalance.toString(),
-      dappTokenBalance: dappTokenBalance.toString(),
+      amsTokenBalance: amsTokenBalance.toString(),
       stakingBalance: stakingBalance.toString(),
     })
   }
 
   _stakeTokens = async (amount) => {
     this.setState({ loading: true })
-    console.log('aaaaaaaaaa', this._daiToken.approve)
     await this._daiToken.approve(this._tokenFarm.address, amount);
     await this._tokenFarm.stakeTokens(amount);
     this.setState({ loading: false })
